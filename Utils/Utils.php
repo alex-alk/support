@@ -12,9 +12,9 @@ use DirectoryIterator;
 use DOMDocument;
 use DOMElement;
 use Exception;
-use IntegrationSupport\AbstractApiService;
 use InvalidArgumentException;
 use RuntimeException;
+use Service\IntegrationSupport\AbstractApiService;
 use SimpleXMLElement;
 
 class Utils
@@ -428,34 +428,24 @@ class Utils
     }
 
 
-    /**
-     * Retrieve the client IP address in a secure way.
-     *
-     * This function checks common HTTP headers (e.g. X-Forwarded-For, Client-IP)
-     * but always validates each candidate IP to ensure it is a well-formed public IP
-     * (i.e. not private or reserved). If none of the headers yield a valid public IP,
-     * it falls back to $_SERVER['REMOTE_ADDR'].
-     *
-     * @return string|null The client IP address, or null if none found.
-     */
-    function getClientIp(): ?string
+    public static function getClientIp(): ?string
     {
-        $headers = [
-            'HTTP_X_FORWARDED_FOR',  // may contain a comma-separated list of IPs
+         $headers = [
             'HTTP_CLIENT_IP',
-            'HTTP_X_CLIENT_IP',
+            'HTTP_X_FORWARDED_FOR',
+            'HTTP_X_FORWARDED',
             'HTTP_X_CLUSTER_CLIENT_IP',
-            'HTTP_FORWARDED',
             'HTTP_FORWARDED_FOR',
+            'HTTP_FORWARDED',
         ];
 
         foreach ($headers as $header) {
             if (!empty($_SERVER[$header])) {
-                // Some headers (like X-Forwarded-For) can contain multiple IPs; split on comma
-                $ips = explode(',', $_SERVER[$header]);
-                foreach ($ips as $ip) {
-                    $ip = trim($ip);
-                    // Validate that it's a valid public IP (no private or reserved ranges)
+                // Sometimes multiple IPs are passed (e.g. “client, proxy1, proxy2”)
+                $ipList = array_map('trim', explode(',', $_SERVER[$header]));
+
+                foreach ($ipList as $ip) {
+                    // Validate: must be a valid public IP (not private, not reserved)
                     if (filter_var(
                         $ip,
                         FILTER_VALIDATE_IP,
@@ -467,20 +457,8 @@ class Utils
             }
         }
 
-        // Fallback to REMOTE_ADDR if set and valid
-        if (!empty($_SERVER['REMOTE_ADDR'])) {
-            $remoteIp = $_SERVER['REMOTE_ADDR'];
-            if (filter_var(
-                $remoteIp,
-                FILTER_VALIDATE_IP,
-                FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
-            )) {
-                return $remoteIp;
-            }
-        }
-
-        // If we still don't have a valid public IP, return null
-        return null;
+        // Fallback—always return something (could be private or localhost)
+        return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
     }
 
     public static function stripSpaces(string $string)

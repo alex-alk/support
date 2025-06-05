@@ -12,33 +12,39 @@ use Psr\Http\Message\StreamInterface;
 class ServerRequest implements ServerRequestInterface
 {
     private array $serverParams;
-    private array $cookieParams = [];
-    private array $queryParams = [];
-    private array $uploadedFiles = [];
-    private $parsedBody = null;
-    private array $attributes = [];
+    private array $cookieParams;
+    private array $queryParams;
+    private array $uploadedFiles;
+    private array $parsedBody;
+    private array $attributes;
 
     private string $method;
     private UriInterface $uri;
-    private string $protocolVersion = '1.1';
+    private string $protocolVersion;
     private array $headers = [];
     private StreamInterface $body;
 
     public function __construct(
         string $method,
         UriInterface $uri,
-        array $headers,
         StreamInterface $body,
-        string $protocolVersion,
-        array $serverParams
+        array $headers = [],
+        string $protocolVersion = '1.1',
+        array $serverParams = [],
+        array $cookies = [],
+        array $queryParams = [],
+        array $uploadedFiles = []
     ) {
         $this->method = $method;
         $this->uri = $uri;
-        $this->headers = $this->normalizeHeaders($headers);
         $this->body = $body;
+        $this->headers = $this->normalizeHeaders($headers);
         $this->protocolVersion = $protocolVersion;
         $this->serverParams = $serverParams;
-        $this->parsedBody = json_decode($body, true);
+        $this->parsedBody = json_decode($body, true) ?? [];
+        $this->cookieParams = $cookies;
+        $this->queryParams = $queryParams;
+        $this->uploadedFiles = $uploadedFiles;
     }
 
     // --- Factory ---
@@ -49,12 +55,9 @@ class ServerRequest implements ServerRequestInterface
         $headers = self::getAllHeaders();
         $body = new Stream(fopen('php://input', 'rb'));
         $protocol = str_replace('HTTP/', '', $_SERVER['SERVER_PROTOCOL'] ?? '1.1');
-        $request = new self($method, $uri, $headers, $body, $protocol, $_SERVER);
+        $request = new self($method, $uri, $body, $headers, $protocol, $_SERVER, $_COOKIE, $_GET, self::normalizeUploadedFiles($_FILES));
 
-        return $request
-            ->withCookieParams($_COOKIE)
-            ->withQueryParams($_GET)
-            ->withUploadedFiles(self::normalizeUploadedFiles($_FILES));
+        return $request;
     }
 
     private static function createUriFromGlobals(array $server): UriInterface

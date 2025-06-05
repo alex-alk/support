@@ -167,6 +167,7 @@ class HttpClient implements ClientInterface
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HEADER         => false,
+            CURLOPT_SSL_VERIFYPEER => false
         ]);
 
         // if (isset($settings['verify_peer'])) {
