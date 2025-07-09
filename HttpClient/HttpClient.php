@@ -35,8 +35,10 @@ class HttpClient implements ClientInterface
         $this->extraOptions = $extraOptions;
     }
 
-    public function request(string $method, string $url, string $body = '', array $headers = []): ResponseInterface
+    public function request(string $method, string $url, array $options): ResponseInterface
     {
+        $body = $options['body'];
+        $headers = $options['headers'] ?? [];
         $request = new Request($method, $url, $body, $headers);
 
         return $this->sendRequest($request);
