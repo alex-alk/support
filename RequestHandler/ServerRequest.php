@@ -1,8 +1,8 @@
 <?php
 
-namespace RequestHandler;
+namespace Support\RequestHandler;
 
-use HttpClient\Message\Uri;
+use Support\HttpClient\Message\Uri;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\MessageInterface;

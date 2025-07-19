@@ -1,8 +1,7 @@
 <?php
 
-namespace RequestHandler;
+namespace Support\RequestHandler;
 
-use RequestHandler\Stream;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\StreamInterface;
 

@@ -1,8 +1,7 @@
 <?php
 
-namespace Database;
+namespace Support\Database;
 
-use Database\Database;
 use PDO;
 
 abstract class Model

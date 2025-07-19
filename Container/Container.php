@@ -1,6 +1,6 @@
 <?php
 
-namespace Container;
+namespace Support\Container;
 
 use Psr\Container\ContainerInterface;
 use ReflectionClass;

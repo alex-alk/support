@@ -1,14 +1,13 @@
 <?php
 
-namespace RequestHandler;
+namespace Support\RequestHandler;
 
-use Router\RouteNotFound;
-use HttpClient\Message\Response;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Router\RouteNotFoundException;
+use Support\HttpClient\Message\Response;
+use Support\Router\RouteNotFoundException;
 
 class RequestHandler implements RequestHandlerInterface
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Router;
+namespace Support\Router;
 
 class View
 {
@@ -13,7 +13,7 @@ class View
     
     public function render(): string
     {
-        $viewPath =  __DIR__. '/../../views/' .$this->view . '.php';
+        $viewPath =  __DIR__. '/../../src/views/' .$this->view . '.php';
         
         if (!file_exists($viewPath)) {
             throw new ViewNotFoundException();

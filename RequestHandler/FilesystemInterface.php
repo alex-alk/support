@@ -1,6 +1,6 @@
 <?php
 
-namespace RequestHandler;
+namespace Support\RequestHandler;
 
 interface FilesystemInterface
 {

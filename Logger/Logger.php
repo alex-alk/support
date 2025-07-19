@@ -1,6 +1,6 @@
 <?php
 
-namespace Logger;
+namespace Support\Logger;
 
 use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
@@ -13,7 +13,7 @@ class Logger implements LoggerInterface
 
     protected string $logFile = __DIR__.'/../../storage/logs/app.log';
 
-    public function log($level, $message, array $context = array())
+    public function log($level, string|\Stringable $message, array $context = []): void
     {
         $levels = [
             LogLevel::EMERGENCY,

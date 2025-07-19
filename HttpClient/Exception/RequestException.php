@@ -1,6 +1,6 @@
 <?php
 
-namespace HttpClient\Exception;
+namespace Support\HttpClient\Exception;
 
 use Psr\Http\Client\RequestExceptionInterface;
 use Psr\Http\Message\RequestInterface;
