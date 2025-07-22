@@ -31,7 +31,6 @@ class RequestHandler implements RequestHandlerInterface
 
         // if the route is not simple, find one with parameters
         if (!$action) {
-
             foreach ($this->routes[$requestMethod] ?? [] as $route => $details) {
 
                 // will store all the parameters value in this array
@@ -84,7 +83,8 @@ class RequestHandler implements RequestHandlerInterface
 
                 // wrong number of parameters
                 if (count($indexNum) !== count($params)) {
-                    throw new RouteNotFoundException();
+                    continue;
+                    //throw new RouteNotFoundException();
                 }
 
                 //converting array to string
@@ -111,6 +111,27 @@ class RequestHandler implements RequestHandlerInterface
                                 $responseStr = call_user_func_array([$class, $method], $params);
                                 return new Response($responseStr, 200, []);
                             }
+                        }
+                    }
+                }
+            }
+
+            // Final fallback for SPA routes
+            $anyRoute = $this->routes[$requestMethod]['/{any}'] ?? null;
+
+            if ($anyRoute) {
+                if (is_callable($anyRoute)) {
+                    return call_user_func($anyRoute);
+                }
+
+                if (is_array($anyRoute)) {
+                    [$class, $method] = $anyRoute;
+
+                    if (class_exists($class)) {
+                        $class = $this->container->get($class);
+
+                        if (method_exists($class, $method)) {
+                            return new Response(call_user_func([$class, $method]), 200);
                         }
                     }
                 }
